@@ -3,23 +3,26 @@ function Promise () {
   var catching = this.error;
   var queue = [];
   var index = 0;
+  var done = false;
 
   var options = {
     then : function (fnc) {
       if (typeof fnc == "function") {
         queue.push(fnc);
-        var tempInterval = setInterval(function () {
-          if (method == null) {
-            if (queue.length > index) {
-              method = queue[index++];
-              runCode();
-            } else {
-              index = 0;
-              queue = [];
-              clearInterval(tempInterval);
+        if (done == true) {
+          tempInterval = setInterval(function () {
+            if (method == null) {
+              if (queue.length > index) {
+                method = queue[index++];
+                runCode();
+              } else {
+                index = 0;
+                queue = [];
+                clearInterval(tempInterval);
+              }
             }
-          }
-        }, 1);
+          }, 1);
+        }
       }
       return options;
     },
@@ -27,8 +30,9 @@ function Promise () {
       if (typeof fnc == "function") {
         method = fnc;
         runCode();
+        done = true;
+        delete options.do;
       }
-      delete options.do;
       return options;
     },
     resolve : function () { method = null; },
