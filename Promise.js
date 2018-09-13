@@ -1,3 +1,6 @@
+/**
+ * @todo add documentation. 
+ */
 function Promise () {
   var method = this.method;
   var catching = this.error;
@@ -19,9 +22,10 @@ function Promise () {
                 index = 0;
                 queue = [];
                 clearInterval(tempInterval);
+                done = false;
               }
             }
-          }, 1);
+          }, 0);
         }
       }
       return options;
