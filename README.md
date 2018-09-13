@@ -40,6 +40,23 @@ p.do(function () {
   p = null;
   console.log(p);
 });
+
+// Or if you're more into ES6, you could try this style
+
+Promise((resolve) => {
+  console.log("Set time out started.");
+  setTimeout(() => {
+    console.log("Time out ended");
+    resolve();
+  }, 500);
+}).then((resolve) => {
+  console.log("Then started");
+  resolve();
+}).then((resolve) => {
+  console.log("Finale!");
+  resolve();
+});
+
 ```
 
 The ```promise.do(...)``` method will be the first method to run, without this method in place then nothign will happen, but provided that you have included the do method, you must also include ```p.resolve();``` within that method's function argument. This way this simple promise library can _then_ know when it's safe to execute the ```p.then(...)``` method. 
