@@ -63,3 +63,5 @@ The ```promise.do(...)``` method will be the first method to run, without this m
 
 
 Provided that you have the source code to the promise library loaded into the browser, you should be able to copy and paste the above demo into the developer's console and see the results for yourself. You can also play aroudn with it if you like, feel free to toy with this library, it is a very simple, lightweight and basic implementation, I **_highly_** doubt it's among the best, but it gets the job done one way or another. 
+
+The `alternative` way of using this tool is to just treat it like a function rather than a class, you don't need to use the keyword `new` with the alternative syntax, you can simply enter the required parameter(s) and away we go. 
