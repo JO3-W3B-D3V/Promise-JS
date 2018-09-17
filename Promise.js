@@ -1,8 +1,10 @@
 /**
  * @author    Joseph Evans
- * @version   1.0.3
+ * @version   1.0.4
  * @since     20/08/2018
  * @copyright Joseph Evans 2018 (c)
+ * @note      With version 1.0.4 the method(s) 'resolve' &
+ *            'reject' have been made private.
  */
 
 
@@ -57,7 +59,7 @@ function Promise (fnc, rej) {
           tempInterval = setInterval(function () {
             if (method == null) {
               if (queue.length > index) {
-                options.reject(rejections[index]);
+                reject(rejections[index]);
                 method = queue[index++];
                 runCode();
               } else {
@@ -85,7 +87,7 @@ function Promise (fnc, rej) {
     do : function (fnc, rej) {
       if (typeof fnc == "function") {
         if (typeof rej == "function") {
-          options.reject(rej);
+          reject(rej);
         }
 
         method = fnc;
@@ -94,37 +96,36 @@ function Promise (fnc, rej) {
         delete options.do;
       }
       return options;
-    },
-
-    /**
-     * @public
-     * @function resolve
-     * @desc     The purpose of this method is to simply allow
-     *           a developer to go onto the 'next' step of the
-     *           chain.
-     */
-    resolve : function () {
-      method = null;
-    },
-
-    /**
-     * @public
-     * @function reject
-     * @param    {Function} fnc
-     * @desc     The purpose of this method is quite simple,
-     *           it allows the developer to do something
-     *           when an error occurs.
-     */
-    reject : function (fnc) {
-      if (typeof fnc == "function") {
-        catching = fnc;
-      }  else {
-        catching = null;
-      }
-      return options;
     }
   };
 
+  /**
+   * @private
+   * @function reject
+   * @param    {Function} fnc
+   * @desc     The purpose of this method is quite simple,
+   *           it allows the developer to do something
+   *           when an error occurs.
+   */
+  function reject (fnc) {
+    if (typeof fnc == "function") {
+      catching = fnc;
+    }  else {
+      catching = null;
+    }
+    return options;
+  }
+
+  /**
+   * @private
+   * @function resolve
+   * @desc     The purpose of this method is to simply allow
+   *           a developer to go onto the 'next' step of the
+   *           chain.
+   */
+  function resolve () {
+    method = null;
+  }
 
   /**
    * @ignore
@@ -168,10 +169,10 @@ function Promise (fnc, rej) {
    *           the exception.
    */
   function runCode () {
-    try { method (options.resolve, options.catch); }
+    try { method (resolve, reject); }
     catch (Exception) {
       if (typeof catching == "function") {
-        catching(Exception, options.resolve);
+        catching(Exception, resolve);
       } else {
         end();
         throw Exception;
