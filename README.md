@@ -5,38 +5,6 @@ This is just an example project of how you can implement promises within JavaScr
 To create a promise, you simply run the following code: 
 
 ```javascript
-// ES5 Style
-var p = new Promise();
-p.do(function () {
-  console.log("START OF DEMO");
-  setTimeout(function () {
-    console.log("Do method.");
-    p.resolve();
-  }, 500);
-}).then(function () {
-  console.log("Then method has run.");
-  p.resolve();
-}).then(function () {
-  console.log("Another then method... Now throw an error");
-  p.resolve();
-  console.log(abc);
-}).reject(function (e) {
-  console.log("Catching...");
-  console.log(e);
-  p.resolve();
-}).then(function () {
-  setTimeout(function () {
-    console.log("Last then method.");
-    p.resolve();
-  }, 500);
-}).then(function () {
-  console.log("END OF DEMO");
-  console.log(p);
-  p.resolve();
-  p = null;
-  console.log(p);
-});
-
 // ES6 Style 
 Promise((resolve) => {
   console.log("Set time out started.");
@@ -61,6 +29,25 @@ Promise((resolve) => {
   resolve();
 });
 
+// ES5 Style 
+var promise = new Promise();
+promise.do(function(r) {
+  console.log("hello");
+  r();
+}).then(function(r) {
+  console.log("world");
+  r();
+}).then(function(r){
+  console.log("Error with es5");
+  console.log(fkdsi23ur9ji23pm);
+  r();
+},function(err, r) {
+  console.log(err);
+  r();
+}).then(function(r){
+  console.log("Finish!");
+  r();
+});
 ```
 
 The ```promise.do(...)``` method will be the first method to run, without this method in place then nothign will happen, but provided that you have included the do method, you must also include ```p.resolve();``` within that method's function argument. This way this simple promise library can _then_ know when it's safe to execute the ```p.then(...)``` method. 
