@@ -37,14 +37,14 @@ promise.do(function(r) {
 }).then(function(r) {
   console.log("world");
   r();
-}).then(function(r){
+}).then(function(r) {
   console.log("Error with es5");
   console.log(fkdsi23ur9ji23pm);
   r();
 },function(err, r) {
   console.log(err);
   r();
-}).then(function(r){
+}).then(function(r) {
   console.log("Finish!");
   r();
 });
