@@ -1,14 +1,16 @@
 /**
  * @author    Joseph Evans
- * @version   1.0.2
+ * @version   1.0.3
  * @since     20/08/2018
  * @copyright Joseph Evans 2018 (c)
  */
 
 
-/** @global
+/**
+ * @global
  * @function Promise
  * @param    {Function} fnc
+ * @param    {Function} rej
  * @desc     The purpose behind this code is to simply
  *           allow one to write async style code, this is
  *           more popular with Node than it is traditional
@@ -21,10 +23,12 @@
  *           alternatives, a big part of this code's purpose
  *           is to remain as simple and lightweight as possible.
  */
-function Promise (fnc) {
-  var method = this.method;
-  var catching = this.error;
+function Promise (fnc, rej) {
+  var method;
+  var tempInterval;
+  var catching;
   var queue = [];
+  var rejections = [];
   var index = 0;
   var done = false;
 
@@ -33,24 +37,31 @@ function Promise (fnc) {
      * @public
      * @function then
      * @param    {Function} fnc
+     * @param    {Function} rej
      * @desc     This is the code you would like to
      *           execute once the previous chained
      *           method has finished.
      */
-    then : function (fnc) {
+    then : function (fnc, rej) {
       if (typeof fnc == "function") {
         queue.push(fnc);
+
+        if (typeof rej == "function") {
+          rejections.push(rej);
+        } else {
+          rejections.push(null);
+        }
+
+
         if (done == true) {
           tempInterval = setInterval(function () {
             if (method == null) {
               if (queue.length > index) {
+                options.reject(rejections[index]);
                 method = queue[index++];
                 runCode();
               } else {
-                index = 0;
-                queue = [];
-                clearInterval(tempInterval);
-                done = false;
+                end();
               }
             }
           }, 0);
@@ -63,6 +74,7 @@ function Promise (fnc) {
      * @public
      * @function do
      * @param    {Function} fnc
+     * @param    {Function} rej
      * @desc     This method essentially adds some
      *           syntax/context sugar coating, it's
      *           kinda like the 'then' method, only
@@ -70,8 +82,12 @@ function Promise (fnc) {
      *           in the chain of methods, this one has
      *           a slightly different name.
      */
-    do : function (fnc) {
+    do : function (fnc, rej) {
       if (typeof fnc == "function") {
+        if (typeof rej == "function") {
+          options.reject(rej);
+        }
+
         method = fnc;
         runCode();
         done = true;
@@ -79,12 +95,66 @@ function Promise (fnc) {
       }
       return options;
     },
-    resolve : function () { method = null; },
-    catch : function (fnc) {
-      if (typeof fnc == "function") { catching = fnc; }
+
+    /**
+     * @public
+     * @function resolve
+     * @desc     The purpose of this method is to simply allow
+     *           a developer to go onto the 'next' step of the
+     *           chain.
+     */
+    resolve : function () {
+      method = null;
+    },
+
+    /**
+     * @public
+     * @function reject
+     * @param    {Function} fnc
+     * @desc     The purpose of this method is quite simple,
+     *           it allows the developer to do something
+     *           when an error occurs.
+     */
+    reject : function (fnc) {
+      if (typeof fnc == "function") {
+        catching = fnc;
+      }  else {
+        catching = null;
+      }
       return options;
     }
   };
+
+
+  /**
+   * @ignore
+   * @private
+   * @function end
+   * @desc     The purpose of this method is to simply
+   *           clear up some memory if an error occurs.
+   *           Or possibly, there's no more promises to
+   *           run within the current chain, etc.
+   */
+  function end () {
+    index = 0;
+    queue = [];
+    rejections = [];
+    done = false;
+    try {
+      clearInterval(tempInterval);
+      tempInterval = null;
+    } catch (NoSuchInterval) {
+      // do nothing
+    }
+
+    for (var x in this) {
+      try {
+        delete this[x];
+      } catch (UnknownException) {
+        // do nothing
+      }
+    }
+  }
 
   /**
    * @ignore
@@ -101,13 +171,14 @@ function Promise (fnc) {
     try { method (options.resolve, options.catch); }
     catch (Exception) {
       if (typeof catching == "function") {
-        catching(Exception);
+        catching(Exception, options.resolve);
       } else {
+        end();
         throw Exception;
       }
     }
   }
 
-  if (typeof fnc === "function") return options.do(fnc);
+  if (typeof fnc === "function") return options.do(fnc, rej);
   else return options;
 }
