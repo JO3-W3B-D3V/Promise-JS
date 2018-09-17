@@ -5,12 +5,8 @@ This is just an example project of how you can implement promises within JavaScr
 To create a promise, you simply run the following code: 
 
 ```javascript
+// ES5 Style
 var p = new Promise();
-```
-
-To make use of the promise, you can now run the following code like so:
-
-```javascript
 p.do(function () {
   console.log("START OF DEMO");
   setTimeout(function () {
@@ -24,7 +20,7 @@ p.do(function () {
   console.log("Another then method... Now throw an error");
   p.resolve();
   console.log(abc);
-}).catch(function (e) {
+}).reject(function (e) {
   console.log("Catching...");
   console.log(e);
   p.resolve();
@@ -41,19 +37,27 @@ p.do(function () {
   console.log(p);
 });
 
-// Or if you're more into ES6, you could try this style
-
+// ES6 Style 
 Promise((resolve) => {
   console.log("Set time out started.");
   setTimeout(() => {
     console.log("Time out ended");
     resolve();
   }, 500);
+}, (error, resolve) => {
+  console.log(error);
+  resolve();
 }).then((resolve) => {
   console.log("Then started");
   resolve();
 }).then((resolve) => {
   console.log("Finale!");
+  resolve();
+}).then(() => {
+  console.log("I will cause an error.");
+  console.log(fhdjfhjksdhfjkdhkfhdshfjhdsjfhjksd);
+}, (error, resolve) => {
+  console.log(error);
   resolve();
 });
 
