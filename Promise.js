@@ -1,6 +1,6 @@
 /**
  * @author    Joseph Evans
- * @version   1.0.4
+ * @version   1.0.5
  * @since     20/08/2018
  * @copyright Joseph Evans 2018 (c)
  * @note      With version 1.0.4 the method(s) 'resolve' &
@@ -33,6 +33,7 @@ function Promise (fnc, rej) {
   var rejections = [];
   var index = 0;
   var done = false;
+  var args = null;
 
   var options = {
     /**
@@ -123,8 +124,9 @@ function Promise (fnc, rej) {
    *           a developer to go onto the 'next' step of the
    *           chain.
    */
-  function resolve () {
+  function resolve (_args) {
     method = null;
+    args = _args;
   }
 
   /**
@@ -169,7 +171,7 @@ function Promise (fnc, rej) {
    *           the exception.
    */
   function runCode () {
-    try { method (resolve, reject); }
+    try { method (resolve, /* reject, */ args); }
     catch (Exception) {
       if (typeof catching == "function") {
         catching(Exception, resolve);
