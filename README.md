@@ -5,18 +5,20 @@ This is just an example project of how you can implement promises within JavaScr
 To create a promise, you simply run the following code: 
 
 ```javascript
-// ES6 Style 
+// ES6 Style
 Promise((resolve) => {
   console.log("Set time out started.");
+  var x = 10;
   setTimeout(() => {
     console.log("Time out ended");
-    resolve();
+    resolve(x);
   }, 500);
 }, (error, resolve) => {
   console.log(error);
   resolve();
-}).then((resolve) => {
+}).then((resolve, data) => {
   console.log("Then started");
+  console.log(`Data = ${data}`);
   resolve();
 }).then((resolve) => {
   console.log("Finale!");
